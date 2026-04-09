@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>刘德明 — 高级产品经理</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black:      #000000;
+      --near-black: #1d1d1f;
+      --light-bg:   #f5f5f7;
+      --white:      #ffffff;
+      --blue-dark:  #2997ff;   /* on dark */
+      --blue-light: #0066cc;   /* on light */
+      --blue-btn:   #0071e3;
+      --text-light: #f5f5f7;
+      --text-dark:  #1d1d1f;
+      --text-mid:   #6e6e73;
+      --max-w:      980px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--black);
+      color: var(--text-light);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV (frosted glass) ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+      height: 48px;
+      background: rgba(29,29,31,0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-name {
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em;
+      color: rgba(255,255,255,0.88);
+    }
+    .nav-links {
+      display: flex; gap: 28px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 12px; color: rgba(255,255,255,0.62);
+      text-decoration: none; letter-spacing: -0.01em;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: var(--black);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      align-items: center; text-align: center;
+      padding: 0 20px 80px;
+      position: relative; overflow: hidden;
+    }
+
+    /* subtle gradient radial glow */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%,
+        rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-label {
+      font-size: 21px; font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--blue-dark);
+      margin-bottom: 12px;
+      opacity: 0; animation: fadeUp .9s ease .2s forwards;
+    }
+    .hero-name {
+      font-size: clamp(56px, 11vw, 120px);
+      font-weight: 700;
+      letter-spacing: -0.028em;
+      line-height: 1.04;
+      color: var(--white);
+      opacity: 0; animation: fadeUp 1s ease .4s forwards;
+    }
+    .hero-subtitle {
+      margin-top: 20px;
+      font-size: clamp(19px, 2.5vw, 28px);
+      font-weight: 400;
+      letter-spacing: -0.016em;
+      color: rgba(255,255,255,0.56);
+      opacity: 0; animation: fadeUp 1s ease .6s forwards;
+    }
+    .hero-cta {
+      margin-top: 36px;
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 1s ease .8s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 12px 22px; border-radius: 980px;
+      background: var(--blue-btn);
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em; color: var(--white);
+      text-decoration: none; transition: background .2s;
+    }
+    .btn-primary:hover { background: #0077ed; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 12px 22px; border-radius: 980px;
+      border: 1px solid rgba(255,255,255,0.28);
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em; color: var(--white);
+      text-decoration: none; transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.6); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── TICKER BAR ── */
+    .ticker {
+      background: #1c1c1e;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .ticker-cell {
+      padding: 40px 32px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .ticker-cell:last-child { border-right: none; }
+    .t-val {
+      font-size: clamp(36px, 5vw, 56px); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1;
+      color: var(--white);
+    }
+    .t-val sup { font-size: .42em; vertical-align: super; font-weight: 500; }
+    .t-label {
+      margin-top: 8px;
+      font-size: 13px; font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--text-mid);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section-wrap {
+      width: 100%; overflow: hidden;
+    }
+
+    /* on-dark / on-light */
+    .on-dark  { background: var(--black); color: var(--text-light); }
+    .on-light { background: var(--light-bg); color: var(--text-dark); }
+    .on-mid   { background: #1c1c1e; color: var(--text-light); }
+
+    /* ── CHAPTER (big product-page section) ── */
+    .chapter {
+      padding: 100px 20px;
+      display: flex; justify-content: center;
+    }
+    .chapter-inner {
+      width: 100%; max-width: var(--max-w);
+    }
+
+    /* centered intro block */
+    .ch-intro {
+      text-align: center;
+      border-bottom: 1px solid;
+      padding-bottom: 56px; margin-bottom: 56px;
+    }
+    .on-dark  .ch-intro { border-color: rgba(255,255,255,0.1); }
+    .on-light .ch-intro { border-color: rgba(0,0,0,0.1); }
+    .on-mid   .ch-intro { border-color: rgba(255,255,255,0.08); }
+
+    .ch-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 14px;
+    }
+    .on-light .ch-eyebrow { color: var(--blue-light); }
+
+    .ch-company {
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 700;
+      letter-spacing: -0.028em; line-height: 1.05;
+    }
+    .ch-role {
+      margin-top: 12px;
+      font-size: 21px; font-weight: 300;
+      letter-spacing: -0.016em;
+      opacity: 0.6;
+    }
+    .ch-period {
+      margin-top: 8px;
+      font-size: 14px; font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--text-mid);
+    }
+    .on-dark  .ch-period,
+    .on-mid   .ch-period { color: rgba(255,255,255,0.38); }
+
+    /* 2-col grid: points + numbers */
+    .ch-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* points */
+    .ch-points { list-style: none; }
+    .ch-points li {
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em;
+      line-height: 1.47;
+      border-bottom: 1px solid;
+      padding: 18px 0;
+    }
+    .on-dark  .ch-points li { border-color: rgba(255,255,255,0.08); }
+    .on-light .ch-points li { border-color: rgba(0,0,0,0.08); }
+    .on-mid   .ch-points li { border-color: rgba(255,255,255,0.06); }
+    .ch-points li:first-child { border-top: 1px solid; }
+    .on-dark  .ch-points li:first-child { border-top-color: rgba(255,255,255,0.08); }
+    .on-light .ch-points li:first-child { border-top-color: rgba(0,0,0,0.08); }
+    .on-mid   .ch-points li:first-child { border-top-color: rgba(255,255,255,0.06); }
+
+    /* numbers */
+    .ch-nums {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    }
+    .num-card {
+      padding: 28px 24px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+    }
+    .on-light .num-card { background: rgba(0,0,0,0.04); }
+    .num-card .n-val {
+      font-size: clamp(28px, 4vw, 44px); font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1;
+    }
+    .num-card .n-label {
+      margin-top: 6px;
+      font-size: 12px; font-weight: 400;
+      letter-spacing: -0.01em; line-height: 1.4;
+      color: var(--text-mid);
+    }
+    .on-dark  .num-card .n-label { color: rgba(255,255,255,0.40); }
+    .on-light .num-card .n-label { color: rgba(0,0,0,0.40); }
+
+    /* more link apple style */
+    .ch-more {
+      margin-top: 20px;
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 14px; font-weight: 400;
+      text-decoration: none; letter-spacing: -0.01em;
+      color: var(--blue-dark);
+      transition: gap .2s;
+    }
+    .on-light .ch-more { color: var(--blue-light); }
+    .ch-more:hover { gap: 8px; }
+    .ch-more::after { content: '›'; font-size: 16px; }
+
+    /* ── SKILLS SECTION ── */
+    .skills-section {
+      background: var(--black);
+      padding: 100px 20px;
+      display: flex; justify-content: center;
+    }
+    .skills-inner {
+      width: 100%; max-width: var(--max-w);
+    }
+    .skills-header {
+      text-align: center; margin-bottom: 56px;
+    }
+    .s-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 14px;
+    }
+    .s-title {
+      font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+      letter-spacing: -0.028em;
+    }
+    .s-sub {
+      margin-top: 8px;
+      font-size: 21px; font-weight: 300;
+      letter-spacing: -0.016em; color: rgba(255,255,255,0.5);
+    }
+    .skills-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+    }
+    .skill-card {
+      background: #1c1c1e;
+      border-radius: 18px;
+      padding: 32px 28px;
+    }
+    .sk-cat {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 18px;
+    }
+    .sk-list { list-style: none; }
+    .sk-list li {
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em; line-height: 1.47;
+      color: rgba(255,255,255,0.85);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 0;
+    }
+    .sk-list li:last-child { border-bottom: none; }
+
+    /* ── EDUCATION ── */
+    .edu-section {
+      background: var(--light-bg);
+      padding: 120px 20px;
+      text-align: center;
+    }
+    .edu-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--blue-light); margin-bottom: 16px;
+    }
+    .edu-name {
+      font-size: clamp(36px, 6vw, 72px); font-weight: 700;
+      letter-spacing: -0.028em; color: var(--text-dark);
+    }
+    .edu-sub {
+      margin-top: 12px;
+      font-size: 21px; font-weight: 300;
+      letter-spacing: -0.016em; color: var(--text-mid);
+    }
+    .edu-badges {
+      margin-top: 28px;
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 13px; font-weight: 400; letter-spacing: -0.01em;
+      padding: 6px 16px; border-radius: 980px;
+      background: rgba(0,102,204,0.08);
+      color: var(--blue-light);
+      border: 1px solid rgba(0,102,204,0.18);
+    }
+
+    /* ── ABOUT ── */
+    .about-section {
+      background: var(--black);
+      padding: 120px 20px;
+      display: flex; justify-content: center;
+    }
+    .about-inner {
+      max-width: 692px; text-align: center;
+    }
+    .about-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 18px;
+    }
+    .about-quote {
+      font-size: clamp(22px, 3vw, 32px); font-weight: 300;
+      letter-spacing: -0.02em; line-height: 1.5;
+      color: rgba(255,255,255,0.88);
+    }
+    .about-tags {
+      margin-top: 40px;
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    }
+    .about-tag {
+      font-size: 13px; font-weight: 400; letter-spacing: -0.01em;
+      padding: 6px 16px; border-radius: 980px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.65);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      background: #1c1c1e;
+      padding: 120px 20px;
+      display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+    }
+    .contact-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 18px;
+    }
+    .contact-h {
+      font-size: clamp(36px, 5vw, 64px); font-weight: 700;
+      letter-spacing: -0.028em; margin-bottom: 56px;
+    }
+    .contact-cards {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    }
+    .contact-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 18px; padding: 28px 32px;
+      min-width: 180px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .cc-label {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--blue-dark); margin-bottom: 10px;
+    }
+    .cc-value {
+      font-size: 17px; font-weight: 400;
+      letter-spacing: -0.022em;
+      color: rgba(255,255,255,0.88);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1c1c1e;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 22px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+    }
+    footer span {
+      font-size: 12px; color: var(--text-mid);
+      letter-spacing: -0.01em;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .r {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .85s cubic-bezier(.16,1,.3,1),
+                  transform .85s cubic-bezier(.16,1,.3,1);
+    }
+    .r.d1 { transition-delay: .08s; }
+    .r.d2 { transition-delay: .18s; }
+    .r.d3 { transition-delay: .28s; }
+    .r.in { opacity: 1; transform: none; }
+
+    /* responsive */
+    @media(max-width:680px){
+      .ch-body { grid-template-columns:1fr; }
+      .ch-nums { grid-template-columns:1fr 1fr; }
+      .ticker { grid-template-columns:1fr 1fr; }
+      .ticker-cell:nth-child(2) { border-right:none; }
+      .skills-grid { grid-template-columns:1fr; }
+      .nav-links { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <span class="nav-name">刘德明</span>
+    <ul class="nav-links">
+      <li><a href="#baidu">百度</a></li>
+      <li><a href="#zhangyu">章鱼</a></li>
+      <li><a href="#penguin">企鹅</a></li>
+      <li><a href="#titan">体坛</a></li>
+      <li><a href="#letv">乐视</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-label">高级产品经理</p>
+    <h1 class="hero-name">刘德明</h1>
+    <p class="hero-subtitle">搜索 &nbsp;·&nbsp; 直播 &nbsp;·&nbsp; 内容 &nbsp;·&nbsp; 商业化 &nbsp;·&nbsp; 八年</p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">立即联系</a>
+      <a href="#baidu" class="btn-secondary">查看经历</a>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-cell r">
+      <div class="t-val">8<sup>年</sup></div>
+      <div class="t-label">产品经验</div>
+    </div>
+    <div class="ticker-cell r d1">
+      <div class="t-val">1.16<sup>亿</sup></div>
+      <div class="t-label">奥运会单日峰值展现</div>
+    </div>
+    <div class="ticker-cell r d2">
+      <div class="t-val">3080<sup>万</sup></div>
+      <div class="t-label">双奥商业创收</div>
+    </div>
+    <div class="ticker-cell r d3">
+      <div class="t-val">5<sup>家</sup></div>
+      <div class="t-label">头部互联网企业</div>
+    </div>
+  </div>
+
+  <!-- BAIDU -->
+  <section class="section-wrap on-dark" id="baidu">
+    <div class="chapter">
+      <div class="chapter-inner">
+        <div class="ch-intro r">
+          <p class="ch-eyebrow">2021.4 — 至今</p>
+          <h2 class="ch-company">百度搜索</h2>
+          <p class="ch-role">高级产品经理</p>
+          <p class="ch-period">北京 · S 级重点项目负责人</p>
+        </div>
+        <div class="ch-body">
+          <div>
+            <ul class="ch-points r d1">
+              <li>东京奥运 / 北京冬奥会 S 级项目负责人，打造 9+ 沉浸态全场景检索体验</li>
+              <li>整体竞争力超越头条、Google、腾讯、夸克等核心竞对</li>
+              <li>与咪咕视频达成独家小程序合作，首创 6 分钟赛事直播试看功能</li>
+              <li>奥运数据矩阵协同百度地图、Feed 流、小度、贴吧等全产品</li>
+              <li>聊天室接入消息中台 + 风控中台，互动率从 1.08% 提升至 1.79%</li>
+              <li>人均互动次数从 2.9 次提升至 4.4 次（+54%）</li>
+            </ul>
+            <a href="#penguin" class="ch-more r d2">了解更多</a>
+          </div>
+          <div class="ch-nums r d1">
+            <div class="num-card">
+              <div class="n-val">1.16亿</div>
+              <div class="n-label">体育中间站单日峰值</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">3155万</div>
+              <div class="n-label">移动端会场日均展现</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">1700万</div>
+              <div class="n-label">夏奥商业创收</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">+66%</div>
+              <div class="n-label">聊天室互动率提升</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 章鱼 -->
+  <section class="section-wrap on-light" id="zhangyu">
+    <div class="chapter">
+      <div class="chapter-inner">
+        <div class="ch-intro r">
+          <p class="ch-eyebrow">2019.9 — 2020.12</p>
+          <h2 class="ch-company">章鱼直播</h2>
+          <p class="ch-role">产品负责人</p>
+          <p class="ch-period">娱乐直播 · 平台合规 · 商业变现</p>
+        </div>
+        <div class="ch-body">
+          <div>
+            <ul class="ch-points r d1">
+              <li>重新设计美颜与消费活动体系，娱乐流水每季度稳定增长 30%</li>
+              <li>自建直播监控后台，对弹幕、直播流、封面进行机器审核</li>
+              <li>成功释放外部审核团队 8 人，大幅提升人效</li>
+              <li>长线跟进国家隐私政策，完成 4 次 App 合规整改</li>
+              <li>双十一整体创收 300 万，直接帮助公司完成年度 KPI</li>
+              <li>520 消费贡献 206 万，占平台全部消费的 81.7%</li>
+            </ul>
+            <a href="#penguin" class="ch-more r d2">了解更多</a>
+          </div>
+          <div class="ch-nums r d1">
+            <div class="num-card">
+              <div class="n-val">+30%</div>
+              <div class="n-label">娱乐流水季度环比</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">8人</div>
+              <div class="n-label">释放外部审核人员</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">300万</div>
+              <div class="n-label">双十一整体创收</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">81.7%</div>
+              <div class="n-label">520 消费平台占比</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 企鹅 -->
+  <section class="section-wrap on-mid" id="penguin">
+    <div class="chapter">
+      <div class="chapter-inner">
+        <div class="ch-intro r">
+          <p class="ch-eyebrow">2018.7 — 2019.9</p>
+          <h2 class="ch-company">企鹅直播</h2>
+          <p class="ch-role">高级产品经理</p>
+          <p class="ch-period">产研中心负责人 · 团队管理 · 新业务孵化</p>
+        </div>
+        <div class="ch-body">
+          <div>
+            <ul class="ch-points r d1">
+              <li>产研中心负责人，20 人团队并发高效处理 4 条业务线</li>
+              <li>主 App 被下架后带领团队构建新产品矩阵（章鱼部落 / 海星体育 / 伊遇）</li>
+              <li>开辟「章鱼有料」PGC 付费阅读业务，拓宽公司变现路径</li>
+              <li>历经搭架子、定氛围、提销量三阶段，活跃作者维持 380 人</li>
+              <li>头部付费用户稳定在 100 人，单月流水最高达 46 万</li>
+              <li>足球打榜模式挖掘，单日消费峰值 208 万，均值增长 600%</li>
+            </ul>
+            <a href="#titan" class="ch-more r d2">了解更多</a>
+          </div>
+          <div class="ch-nums r d1">
+            <div class="num-card">
+              <div class="n-val">20人</div>
+              <div class="n-label">产研团队规模</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">46万</div>
+              <div class="n-label">付费阅读单月峰值流水</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">208万</div>
+              <div class="n-label">足球打榜单日峰值消费</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">+600%</div>
+              <div class="n-label">打榜日均消费增幅</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 体坛 -->
+  <section class="section-wrap on-light" id="titan">
+    <div class="chapter">
+      <div class="chapter-inner">
+        <div class="ch-intro r">
+          <p class="ch-eyebrow">2017.1 — 2018.7</p>
+          <h2 class="ch-company">体坛周报<br>体坛+</h2>
+          <p class="ch-role">高级产品经理 / 产品负责人</p>
+          <p class="ch-period">全线产品 · 内容分发 · 付费阅读</p>
+        </div>
+        <div class="ch-body">
+          <div>
+            <ul class="ch-points r d1">
+              <li>负责 App、Web 官网、H5、小程序、CMS 后台全线产品</li>
+              <li>定义《体坛周报》《足球周刊》《扣篮》线上付费及会员售卖模式</li>
+              <li>对接百家号、网易号、大鱼号等第三方平台进行内容分发</li>
+              <li>世界杯期间上线微信小程序「体坛世界杯指南」，累计用户 7 万</li>
+              <li>设计足坛 70 年代最佳阵容评选活动，在体育圈引发广泛讨论</li>
+            </ul>
+            <a href="#letv" class="ch-more r d2">了解更多</a>
+          </div>
+          <div class="ch-nums r d1">
+            <div class="num-card">
+              <div class="n-val">7万</div>
+              <div class="n-label">世界杯小程序累计用户</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">2万+</div>
+              <div class="n-label">线上杂志单日流水</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">5+</div>
+              <div class="n-label">产品线全覆盖</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">3+</div>
+              <div class="n-label">第三方分发平台</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 乐视 -->
+  <section class="section-wrap on-dark" id="letv">
+    <div class="chapter">
+      <div class="chapter-inner">
+        <div class="ch-intro r">
+          <p class="ch-eyebrow">2015.3 — 2016.12</p>
+          <h2 class="ch-company">乐视体育</h2>
+          <p class="ch-role">产品经理</p>
+          <p class="ch-period">PC / H5 · 社区 · 赛事合作</p>
+        </div>
+        <div class="ch-body">
+          <div>
+            <ul class="ch-points r d1">
+              <li>PC / H5 端第二负责人，日均 UV 维持在 300 万</li>
+              <li>全程主导主场社区项目，用户画像分层，从 0 到 1 完整落地</li>
+              <li>主导 2015 长沙男篮亚锦赛，参与 2016 奥运会、欧洲杯对外合作</li>
+              <li>乐视集团 414 盛典，PC / H5 体育会员订单贡献占比 70%</li>
+              <li>欧洲杯 / 奥运期间日加入近 3k，日发帖 4k，App 留存 +20%</li>
+            </ul>
+            <a href="#contact" class="ch-more r d2">联系我 ›</a>
+          </div>
+          <div class="ch-nums r d1">
+            <div class="num-card">
+              <div class="n-val">300万</div>
+              <div class="n-label">PC/H5 日均 UV</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">70%</div>
+              <div class="n-label">414 盛典会员订单占比</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">0→1</div>
+              <div class="n-label">主场社区从零搭建</div>
+            </div>
+            <div class="num-card">
+              <div class="n-val">+20%</div>
+              <div class="n-label">大赛期间 App 留存提升</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills-section">
+    <div class="skills-inner">
+      <div class="skills-header r">
+        <p class="s-eyebrow">工具与技能</p>
+        <h2 class="s-title">专业能力</h2>
+        <p class="s-sub">熟练运用全链路产品研发工具链</p>
+      </div>
+      <div class="skills-grid r d1">
+        <div class="skill-card">
+          <div class="sk-cat">产品设计</div>
+          <ul class="sk-list">
+            <li>墨刀</li>
+            <li>Axure</li>
+            <li>Sketch</li>
+            <li>Xmind</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="sk-cat">数据分析</div>
+          <ul class="sk-list">
+            <li>Tableau</li>
+            <li>Metabase</li>
+            <li>神策分析</li>
+            <li>友盟+</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="sk-cat">专项能力</div>
+          <ul class="sk-list">
+            <li>SEO / ASO</li>
+            <li>CMS 后台运营</li>
+            <li>英语 CET-4</li>
+            <li>计算机四级网工</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="edu-section">
+    <p class="edu-eyebrow r">教育背景</p>
+    <h2 class="edu-name r d1">枣庄学院</h2>
+    <p class="edu-sub r d2">计算机科学与技术 · 本科 · 2009 — 2013</p>
+    <div class="edu-badges r d3">
+      <span class="badge">计算机科学与技术</span>
+      <span class="badge">英语 CET-4</span>
+      <span class="badge">计算机四级</span>
+      <span class="badge">优秀团员</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="about-inner r">
+      <p class="about-eyebrow">关于我</p>
+      <p class="about-quote">
+        崇拜至简主义，强调大量信息输入与交互。
+        计算机背景，理工科思维，从不坑开发。
+        八年产品人，搜索、直播、内容付费、商业变现——
+        不断思考，不断精进。
+      </p>
+      <div class="about-tags">
+        <span class="about-tag">搜索产品</span>
+        <span class="about-tag">体育直播</span>
+        <span class="about-tag">商业变现</span>
+        <span class="about-tag">内容付费</span>
+        <span class="about-tag">垂直社区</span>
+        <span class="about-tag">至简主义</span>
+        <span class="about-tag">工程师思维</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <p class="contact-eyebrow r">开始对话</p>
+    <h2 class="contact-h r d1">联系刘德明</h2>
+    <div class="contact-cards r d2">
+      <div class="contact-card">
+        <div class="cc-label">邮箱</div>
+        <div class="cc-value">liudeming58@yeah.net</div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-label">电话</div>
+        <div class="cc-value">182-1106-2270</div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-label">籍贯</div>
+        <div class="cc-value">山东</div>
+      </div>
+      <div class="contact-card">
+        <div class="cc-label">出生年份</div>
+        <div class="cc-value">1990 年 11 月</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Copyright © 2026 刘德明. 保留所有权利。</span>
+    <span>高级产品经理</span>
+  </footer>
+
+  <script>
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.10 });
+    document.querySelectorAll('.r').forEach(el => obs.observe(el));
+  </script>
+</body>
+</html>
